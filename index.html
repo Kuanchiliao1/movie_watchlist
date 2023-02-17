@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  .movies-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .movie-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .movie-img-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .movie-img-container img {
+    max-width: 100%;
+  }
+  .movie-info-container {
+    width: 100%;
+    text-align: center;
+  }
+  .movie-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .movie-time, .movie-genre {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .movie-add-btn {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .movie-description {
+    font-size: 1.2rem;
+  }
+</style>
+<body>
+  <div class="body">
+    <div class="flex header-container">
+      <h1>Find your film</h1>
+      <a href="watchlist.html">My Watchlist</a>
+    </div>
+    <div class="searchbar">
+      <input type="text" placeholder="Blade Runner">
+      <button>Search</button>
+    </div>
+    <main class="movies-container">
+      <div class="movie-container flex">
+        <div class="movie-img-container">
+          <img src="https://i.imgur.com/9kKnLod.jpeg" alt="">
+        </div>
+        <div class="movie-info-container">
+          <h2 class="movie-title">Blade Runner
+            <span>⭐8.1</span>
+          </h2>
+          <p class="movie-time">116 min</p>
+          <p class="movie-genre">Drama, Mystery, Sci-fi</p>
+          <button class="movie-add-btn">+ Watchlist</button>
+          <p class="movie-description">A Blade Runner must pursue and terminate 4 replicants who stole a ship in space and have returned to Earth to find their creator.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
