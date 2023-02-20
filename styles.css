@@ -47,12 +47,13 @@ button {
 
 /* Layout */
 .movie-img-container {
-  width: max(20%, 7rem);
+  
   display: inline-block;
 }
 
 .movie-img-container > image {
-  width: 100%;
+  width: max(20%, 7rem);
+  width: 50%;
 }
 
 .movie-container {
@@ -110,6 +111,13 @@ h1 {
 
 h2.movie-title {
   margin-top: 0;
+}
+
+.movie-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Components */
