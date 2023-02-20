@@ -6,6 +6,7 @@ body {
   min-height: 100vh;
   background-color: #121212;
   color: wheat;
+  font-family: 'Inter', sans-serif;
 }
 
 img {
@@ -44,43 +45,7 @@ button {
   margin-bottom: 3rem;
 }
 
-/* Grid */
-.movie-info-container {
-  display: grid;
-  width: 60%;
-  border: solid pink 2px;
-  grid-template:
-  "title title title" auto
-  "time genre add-btn" auto
-  "desc desc desc" auto / auto auto 1fr;
-  column-gap: 1.5rem;
-  justify-items: start;
-}
-
-.movie-info-container {
-  grid-template: none;
-}
-/* 
-.movie-title {
-  grid-area: title;
-}
-
-.movie-time {
-  grid-area: time;
-}
-
-.movie-genre {
-  grid-area: genre;
-}
-
-.movie-add-btn {
-  grid-area: add-btn;
-}
-
-.movie-description {
-  grid-area: desc;
-} */
-
+/* Layout */
 .movie-img-container {
   width: max(20%, 7rem);
   display: inline-block;
@@ -91,12 +56,19 @@ button {
 }
 
 .movie-container {
-  border: solid lightblue 2px;
+  text-align: left;
+  gap: .5rem;
+  border-bottom: #2C2C2C 2px solid;
+  margin-bottom: 1.25rem;
+}
+
+.movie-img-info-container {
+  gap: 1rem;
 }
 
 .searchbar {
   display: flex;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .searchbar > input {
@@ -107,9 +79,97 @@ button {
   flex: 1;
 }
 
+.movie-info-container > * {
+  margin-top: 0;
+}
+
 /* Typography */
 .header-container {
   font-size: .6rem;
+}
+
+span.rating {
+  font-size: .75rem;
+  display: block;
+}
+
+.watchlist-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.move-genre {
+  white-space: pre-wrap;
+}
+
+
+
+h1 {
+  font-size: 1.75rem;
+}
+
+h2.movie-title {
+  margin-top: 0;
+}
+
+/* Components */
+.searchbar > * {
+  background-color: hsl(0, 0%, 29%);
+  padding-inline: 1.5rem;
+}
+
+.searchbar > input {
+  background-color: hsl(240, 1%, 18%);
+  padding: .4rem .5rem;
+  border: none;
+  color: hsl(0, 0%, 65%);
+}
+
+.searchbar > input:focus,
+.searchbar > input:hover {
+  border: none;
+  outline: none;
+}
+
+@media (min-width: 65ch) {
+  body {
+    color: red;
+  }
+
+  .movie-info-container {
+    display: grid;
+    width: 60%;
+    grid-template:
+    "title title title" auto
+    "time genre add-btn" auto
+    "desc desc desc" auto / auto auto 1fr;
+    column-gap: 1.5rem;
+    justify-items: start;
+  }
+
+  .movie-info-container {
+    grid-template: none;
+  } */
+   
+  .movie-title {
+    grid-area: title;
+  }
+
+  .movie-time {
+    grid-area: time;
+  }
+
+  .movie-genre {
+    grid-area: genre;
+  }
+
+  .movie-add-btn {
+    grid-area: add-btn;
+  }
+
+  .movie-description {
+    grid-area: desc;
+  }
 }
 
 /* movie-time
