@@ -26,21 +26,30 @@ let input = "guardian"
     
 //   })
 
+// Wait until content is loaded before running the code
 document.addEventListener("DOMContentLoaded", () => {
+  // Grab a list of movie objects from the OMDB API
   fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${input}`)
     .then(response => response.json())
     .then(data => {
+      // Iterate through the list of movies
       data.Search.forEach(movie => {
         const movieId = movie.imdbID
+        // Use the ID to make a request to the OMDB API for more details on a specific movie
         fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}`)
         .then(response => response.json())
         .then(movieData => {
-          moviesContainer.innerHTML += getMovieHtml(movieData)
+          // Generate the HTML and add it to the DOM
+          moviesContainer.insertAdjacentHTML("beforeend", getMovieHtml(movieData)) 
+          
           const addBtn = document.getElementById(movieId)
-          console.log(movieId) // logs out the correct btn element
           addBtn.addEventListener("click", () => {
-            console.log("testing")
+            if (!localStorage.getItem(movieId)) {
+              localStorage.setItem(movieId, JSON.stringify(movieData))
+            }
+            console.log(movieId)
           })
+            
         })
       })
     })
