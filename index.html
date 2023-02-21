@@ -4,70 +4,24 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Movie thing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="styles.css">
   <script src="index.js" type="module" defer></script>
 </head>
-<!-- <style>
-  .movies-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .movie-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 1rem;
-  }
-  .movie-img-container {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  .movie-img-container img {
-    max-width: 100%;
-  }
-  .movie-info-container {
-    width: 100%;
-    text-align: center;
-  }
-  .movie-title {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .movie-time, .movie-genre {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  .movie-add-btn {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    background-color: blue;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  .movie-description {
-    font-size: 1.2rem;
-  }
-</style> -->
 <body>
   <div class="body">
     <div class="flex header-container">
       <h1>Find your film</h1>
       <a class="watchlist-link" href="watchlist.html">My Watchlist</a>
     </div>
-    <div class="searchbar">
-      <input type="text" placeholder="Blade Runner">
-      <button>Search</button>
-    </div>
+    <form class="searchbar" id="search-form">
+      <input required type="text" placeholder="Blade Runner" name="search-input" id="search-input">
+      <button id="search-btn">Search</button>
+    </form>
     <main class="movies-container" id="movies-container">
       <!-- <div class="movie-container">
         <div class="movie-img-info-container flex">
