@@ -34,7 +34,7 @@ button {
 /* MAIN LAYOUT */
 .body {
   margin: 0 auto;
-  max-width: 50rem;
+  max-width: 48rem;
   text-align: center;
   padding: 2rem;
 }
@@ -46,14 +46,10 @@ button {
 }
 
 /* Layout */
-.movie-img-container {
-  
-  display: inline-block;
-}
-
-.movie-img-container > image {
+.movie-img-info-container > img {
   width: max(20%, 7rem);
-  width: 50%;
+  height: auto;
+  object-fit: cover;
 }
 
 .movie-container {
@@ -148,16 +144,13 @@ h2.movie-title {
     display: grid;
     width: 60%;
     grid-template:
-    "title title title" auto
-    "time genre add-btn" auto
-    "desc desc desc" auto / auto auto 1fr;
-    column-gap: 1.5rem;
+    "title title title" min-content
+    "time genre add-btn" min-content
+    "desc desc desc" min-content / auto auto 1fr;
+    column-gap: 1rem;
     justify-items: start;
+    margin: auto 0;
   }
-
-  .movie-info-container {
-    grid-template: none;
-  } */
    
   .movie-title {
     grid-area: title;
@@ -173,11 +166,26 @@ h2.movie-title {
 
   .movie-add-btn {
     grid-area: add-btn;
+    align-self: start;
   }
 
   .movie-description {
     grid-area: desc;
   }
+
+  .movie-img-info-container > img {
+    margin-bottom: 1.5em;
+  }
+
+  span.rating {
+    font-size: .75rem;
+    display: inline;
+  }
+
+  h1 {
+    font-size: 2.75rem;
+  }
+
 }
 
 /* movie-time
