@@ -70,10 +70,12 @@ button {
 
 .searchbar > input {
   flex: 4;
+  border-radius: 5px 0 0 5px;
 }
 
 .searchbar > button {
   flex: 1;
+  border-radius: 0px 5px 5px 0;
 }
 
 .movie-info-container > * {
@@ -117,6 +119,10 @@ h2.movie-title {
 }
 
 /* Components */
+.searchbar {
+  position: relative;
+}
+
 .searchbar > * {
   background-color: hsl(0, 0%, 29%);
   padding-inline: 1.5rem;
@@ -135,9 +141,30 @@ h2.movie-title {
   outline: none;
 }
 
+.header-container {
+  position: relative;
+}
+
+.header-container::before {
+  content: "";
+  position: absolute;
+  left: -100%;
+  right: -100%;
+  top: -50%;
+  bottom: -87%;
+  z-index: -1;
+  background-image: url("images/felix-mooneeram-evlkOfkQ5rE-unsplash.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.movie-add-btn {
+  cursor: pointer;
+}
+
 @media (min-width: 65ch) {
   body {
-    color: red;
+    color: wheat;
   }
 
   .movie-info-container {
@@ -186,6 +213,23 @@ h2.movie-title {
     font-size: 2.75rem;
   }
 
+  .movie-add-btn {
+    width: max-content;
+  }
+
+  .watchlist-link {
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .watchlist-link:disabled {
+    opacity: .5;
+    background-color: red;
+  }
+
+  .header-container::before {
+    bottom: -55%;
+  }
 }
 
 /* movie-time
