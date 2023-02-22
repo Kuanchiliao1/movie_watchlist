@@ -11,7 +11,15 @@ if (moviesContainerWatchlist) {
   // Iterate through the movies
   movies.forEach(movie => {
     // Generate the HTML and add it to the DOM
-    moviesContainerWatchlist.insertAdjacentHTML("beforeend", getMovieHtml(movie))
+    moviesContainerWatchlist.insertAdjacentHTML("beforeend", getMovieHtml(movie, "watchlist"))
+    const removeBtn = document.getElementById(movie.imdbID)
+    console.log(removeBtn)
+    removeBtn.addEventListener("click", () => {
+      removeBtn.parentElement.parentElement.parentElement.remove()
+      const movies = JSON.parse(localStorage.getItem("movies"))
+      const filteredMovies = movies.filter(movie => movie.imdbID !== removeBtn.id)
+      localStorage.setItem("movies", JSON.stringify(filteredMovies))
+    })
   })
 }
 
@@ -40,6 +48,9 @@ searchForm.addEventListener("submit", (e) => {
           addBtn.addEventListener("click", () => {
             addToLocalStorage(movieData)
             console.log(JSON.parse(localStorage.getItem("movies")).map(movie => movie.Title))
+            addBtn.disabled = true
+            addBtn.textContent = "✅ Added"
+            console.log("it works")
           })
         })
       })
@@ -63,7 +74,7 @@ function addToLocalStorage(movieData) {
   } else {
     if (isMovieInLocalStorage(movieData)) return
     const storageArray = JSON.parse(localStorage.getItem("movies"))
-    storageArray.push(movieData)
+    storageArray.unshift(movieData)
     localStorage.setItem("movies", JSON.stringify(storageArray))
   }
 }
@@ -81,10 +92,21 @@ function isMovieInLocalStorage(movieData) {
 // Use the response from the OMDB API to render the movie details
 
 
-function getMovieHtml(movieData) {
+function getMovieHtml(movieData, page="search") {
   const { Title, Poster, imdbRating, imdbID, Runtime, Genre, Plot } = movieData
 
-  return `
+  // if page is watchlist, set page to watchlist, otherwise set btnName to search
+  let btnName
+  page === "watchlist" ? btnName = "➖ Remove" : btnName = "➕ Watchlist"
+  console.log(page)
+
+  if (isMovieInLocalStorage(movieData) && page === "search") {
+    btnName = "✅ Added"
+  }
+  console.log(isMovieInLocalStorage(movieData))
+
+  if (window.matchMedia("(max-width: 65ch)").matches) {
+    return `
   <div class="movie-container">
     <div class="movie-img-info-container flex">
         <img src="${Poster}" alt="picture of movie">
@@ -94,10 +116,38 @@ function getMovieHtml(movieData) {
         </h2>
         <p class="movie-time">${Runtime}</p>
         <p class="movie-genre">${Genre}</p>
-        <button class="movie-add-btn" id="${imdbID}">➕ Watchlist</button>
+        <button class="movie-add-btn" id="${imdbID}">${btnName}</button>
       </div>
     </div>
     <p class="movie-description">${Plot}</p>
   </div>
   `
+  } else {
+    return `
+    <div class="movie-container">
+      <div class="movie-img-info-container flex">
+          <img src="${Poster}" alt="picture of movie">
+        <div class="movie-info-container">
+          <h2 class="movie-title">${Title}
+            <span class="rating"> ⭐ ${imdbRating}</span>
+          </h2>
+          <p class="movie-time">${Runtime}</p>
+          <p class="movie-genre">${Genre}</p>
+          <button class="movie-add-btn" id="${imdbID}">${btnName}</button>
+          <p class="movie-description">${Plot}</p>
+        </div>
+      </div>
+    </div>
+    `
+  }
 }
+
+console.log(window.matchMedia("(max-width: 700px)"))
+
+// Pseudo code
+// Add data attribute to elements that I've added to the watchlist
+// When I click on the watchlist button, set the data attribute to the element to true
+// When I click on the remove button, set the data attribute to the element to false
+// When I pull movies from API, check if the data attribute is true or false
+// If the data attribute is true, do not display HTML for that movie
+// If the data attribute is false, display HTML for that movie
