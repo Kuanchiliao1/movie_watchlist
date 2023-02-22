@@ -1,109 +1,147 @@
 const apiKey = "f67d1b01"
+
+// DOM Elements
 const moviesContainer = document.getElementById("movies-container")
 const searchForm = document.getElementById("search-form")
-
-
-// if we're on the watchlist page, run this code
 const moviesContainerWatchlist = document.getElementById("movies-container--watchlist")
-if (moviesContainerWatchlist) {
+
+// Set page to either watchlist or search
+let page
+moviesContainerWatchlist ? page = "watchlist" : page = "search"
+
+// If nothing in local storage, add a default search
+if (!getSearchFromLocalStorage()) {
+  storeSearchInLocalStorage("Blade Runner")
+}
+
+// Run this code if the watchlist page is loaded
+if (page === "watchlist") {
   // Get the movies from local storage
-  const movies = JSON.parse(localStorage.getItem("movies"))
+  let movies = getMoviesFromLocalStorage()
+  setHtmlIfWatchlistEmpty()
   // Iterate through the movies
   movies.forEach(movie => {
     // Generate the HTML and add it to the DOM
     moviesContainerWatchlist.insertAdjacentHTML("beforeend", getMovieHtml(movie, "watchlist"))
-    const removeBtn = document.getElementById(movie.imdbID)
-    console.log(removeBtn)
-    removeBtn.addEventListener("click", () => {
-      removeBtn.parentElement.parentElement.parentElement.remove()
-      const movies = JSON.parse(localStorage.getItem("movies"))
-      const filteredMovies = movies.filter(movie => movie.imdbID !== removeBtn.id)
-      localStorage.setItem("movies", JSON.stringify(filteredMovies))
+    const removeMovieBtn = document.getElementById(movie.imdbID)
+    removeMovieBtn.addEventListener("click", () => {      
+      // Is there a better way to remove the parent parent parent element here?
+      removeMovieBtn.parentElement.parentElement.parentElement.remove()
+      deleteMovieFromLocalStorage(movie.imdbID)
     })
   })
 }
 
-// Wait until content is loaded before running the code
-searchForm.addEventListener("submit", (e) => {
-  e.preventDefault()
-  // Clear the movies container
-  moviesContainer.innerHTML = ""
+// LOCAL STORAGE FUNCTIONS
+function getMoviesFromLocalStorage() {
+  return JSON.parse(localStorage.getItem("movies"))
+}
 
-  const searchInput = document.getElementById("search-input").value
-  console.log(searchInput)
-  // Grab a list of movie objects from the OMDB API
-  fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchInput}`)
-    .then(response => response.json())
-    .then(data => {
-      // Iterate through the list of movies
-      data.Search.forEach(movie => {
-        const movieId = movie.imdbID
-        // Use the ID to make a request to the OMDB API for more details on a specific movie
-        fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}`)
-        .then(response => response.json())
-        .then(movieData => {
-          // Generate the HTML and add it to the DOM
-          moviesContainer.insertAdjacentHTML("beforeend", getMovieHtml(movieData)) 
-          const addBtn = document.getElementById(movieId)
-          addBtn.addEventListener("click", () => {
-            addToLocalStorage(movieData)
-            console.log(JSON.parse(localStorage.getItem("movies")).map(movie => movie.Title))
-            addBtn.disabled = true
-            addBtn.textContent = "✅ Added"
-            console.log("it works")
-          })
-        })
-      })
-    })
-})
+function getSearchFromLocalStorage() {
+  return localStorage.getItem("search")
+}
 
-// Pseudocode
+function deleteMovieFromLocalStorage(movieId) {
+  const movies = getMoviesFromLocalStorage()
+  const filteredMovies = movies.filter(movie => movie.imdbID !== movieId)
+  localStorage.setItem("movies", JSON.stringify(filteredMovies))
+  setHtmlIfWatchlistEmpty()
+}
+
+// Pseudocode for addMovieToLocalStorage
 // - Check if there is anything in local storage
-//   - If there is nothing in local storage, add the movie to local storage as an array
-//   - If there is something in local storage, check if the movie is already in local storage
+//   - If nothing in local storage, add the movie to local storage
+//   - If something in local storage, check if the movie is already in local storage
 //     - If the movie is already in local storage, do nothing
 //     - If the movie is not in local storage, add the movie to local storage
-function addToLocalStorage(movieData) {
-  // const storageArray = [JSON.parse(localStorage.getItem("movies")] || [])
-  // (storageArray === []) ? localStorage.setItem("movies", JSON.stringify([movieData])) : storageArray.push(movieData)
-  // console.log(storageArray)
-  
+function addMovieToLocalStorage(movieData) {
+  // Return early if the movie is already in local storage
+  if (isMovieInLocalStorage(movieData)) return
   // If there is nothing in local storage, add the movie to local storage as an array
-  if (!localStorage.getItem("movies")) {
-    localStorage.setItem("movies", JSON.stringify([movieData]))
-  } else {
-    if (isMovieInLocalStorage(movieData)) return
-    const storageArray = JSON.parse(localStorage.getItem("movies"))
-    storageArray.unshift(movieData)
-    localStorage.setItem("movies", JSON.stringify(storageArray))
-  }
+  const storageArray = JSON.parse(localStorage.getItem("movies")) || []
+  storageArray.unshift(movieData)
+  localStorage.setItem("movies", JSON.stringify(storageArray))
 }
 
 function isMovieInLocalStorage(movieData) {
-  const storageArray = JSON.parse(localStorage.getItem("movies"))
+  const storageArray = JSON.parse(localStorage.getItem("movies")) || []
   return storageArray.some(movie => movie.imdbID === movieData.imdbID)
 }
 
+function storeSearchInLocalStorage(searchInput) {
+  localStorage.setItem("search", searchInput)
+}
+
+
+search()
+
+// FORM EVENT LISTENER
+searchForm.addEventListener("submit", search)
+function search(e) {
+  // How are we accessing `e` even though I'm not passing it in as an argument?
+  if (e) e.preventDefault()
+  
+  // Clear the movies container
+  moviesContainer.innerHTML = ""
+  let searchInput = document.getElementById("search-input").value
+  
+  searchInput ? storeSearchInLocalStorage(searchInput) : searchInput = getSearchFromLocalStorage()
+
+  // Grab a list of movie objects from the OMDB API
+    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchInput}`)
+      .then(response => response.json())
+      .then(data => {
+        // What's the diff between a try catch block and doing this?
+        if (data.Error) {
+          moviesContainer.insertAdjacentHTML("beforeend", `<h1>${data.Error}</h1>`)
+          return
+        }
+        // Iterate through the list of movies
+        data.Search.forEach(movie => {
+          const movieId = movie.imdbID
+          // Use the ID to make a request to the OMDB API for more details on a specific movie
+          fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}`)
+          .then(response => response.json())
+          .then(movieData => {
+            // Generate the HTML and add it to the DOM
+            moviesContainer.insertAdjacentHTML("beforeend", getMovieHtml(movieData)) 
+            const addBtn = document.getElementById(movieId)
+            addBtn.addEventListener("click", () => {
+              if (addBtn.textContent === "✅ Added") {
+                deleteMovieFromLocalStorage(movieId)
+                addBtn.textContent = "➕ Watchlist"
+              } else {
+                addMovieToLocalStorage(movieData)
+                addBtn.textContent = "✅ Added"
+              }
+            })
+          })
+        })
+      })
+    }
+
+// HELPER FUNCTIONS
+function setHtmlIfWatchlistEmpty() {
+  let movies = getMoviesFromLocalStorage()
+  if (movies.length === 0 && page === "watchlist") {
+    moviesContainerWatchlist.insertAdjacentHTML("beforeend", `<h1 style="padding-top: 5rem;">Nothing in your watchlist</h1><p></p>Search for movies <a href="index.html">here</a></p>`)
+  }
+}
 
 // Steps:
 // Use search query parameter to search for a movie
 // Retrieve the imdbID from the response
 // Use the imdbID to make a request to the OMDB API
 // Use the response from the OMDB API to render the movie details
-
-
 function getMovieHtml(movieData, page="search") {
   const { Title, Poster, imdbRating, imdbID, Runtime, Genre, Plot } = movieData
-
   // if page is watchlist, set page to watchlist, otherwise set btnName to search
   let btnName
   page === "watchlist" ? btnName = "➖ Remove" : btnName = "➕ Watchlist"
-  console.log(page)
 
   if (isMovieInLocalStorage(movieData) && page === "search") {
     btnName = "✅ Added"
   }
-  console.log(isMovieInLocalStorage(movieData))
 
   if (window.matchMedia("(max-width: 65ch)").matches) {
     return `
@@ -141,13 +179,3 @@ function getMovieHtml(movieData, page="search") {
     `
   }
 }
-
-console.log(window.matchMedia("(max-width: 700px)"))
-
-// Pseudo code
-// Add data attribute to elements that I've added to the watchlist
-// When I click on the watchlist button, set the data attribute to the element to true
-// When I click on the remove button, set the data attribute to the element to false
-// When I pull movies from API, check if the data attribute is true or false
-// If the data attribute is true, do not display HTML for that movie
-// If the data attribute is false, display HTML for that movie
