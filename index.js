@@ -1,5 +1,9 @@
-const apiKey = "f67d1b01"
+// Extra features:
+// - Add search to local storage
+// - Auto load movies from local storage on search page
+// - Error message if search invalid
 
+const apiKey = "f67d1b01"
 // DOM Elements
 const moviesContainer = document.getElementById("movies-container")
 const searchForm = document.getElementById("search-form")
@@ -9,7 +13,7 @@ const moviesContainerWatchlist = document.getElementById("movies-container--watc
 let page
 moviesContainerWatchlist ? page = "watchlist" : page = "search"
 
-// If nothing in local storage, add a default search
+// Add default search to local storage if empty
 if (!getSearchFromLocalStorage()) {
   storeSearchInLocalStorage("Blade Runner")
 }
@@ -30,6 +34,55 @@ if (page === "watchlist") {
       deleteMovieFromLocalStorage(movie.imdbID)
     })
   })
+}
+
+// Run this code if the search page is loaded
+if (page === "search") {
+  renderMovies()
+  // FORM EVENT LISTENER
+  searchForm.addEventListener("submit", renderMovies)
+  function renderMovies(e) {
+    // How are we accessing `e` even though I'm not passing it in as an argument?
+    if (e) e.preventDefault()
+    
+    // Clear the movies container
+    moviesContainer.innerHTML = ""
+    let searchInput = document.getElementById("search-input").value
+    
+    searchInput ? storeSearchInLocalStorage(searchInput) : searchInput = getSearchFromLocalStorage()
+
+    // Grab a list of movie objects from the OMDB API
+      fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchInput}`)
+        .then(response => response.json())
+        .then(data => {
+          // What's the diff between a try catch block and doing this?
+          if (data.Error) {
+            moviesContainer.insertAdjacentHTML("beforeend", `<h1>${data.Error}</h1>`)
+            return
+          }
+          // Iterate through the list of movies
+          data.Search.forEach(movie => {
+            const movieId = movie.imdbID
+            // Use the ID to make a request to the OMDB API for more details on a specific movie
+            fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}`)
+            .then(response => response.json())
+            .then(movieData => {
+              // Generate the HTML and add it to the DOM
+              moviesContainer.insertAdjacentHTML("beforeend", getMovieHtml(movieData)) 
+              const addBtn = document.getElementById(movieId)
+              addBtn.addEventListener("click", () => {
+                if (addBtn.textContent === "✅ Added") {
+                  deleteMovieFromLocalStorage(movieId)
+                  addBtn.textContent = "➕ Watchlist"
+                } else {
+                  addMovieToLocalStorage(movieData)
+                  addBtn.textContent = "✅ Added"
+                }
+              })
+            })
+          })
+        })
+      }
 }
 
 // LOCAL STORAGE FUNCTIONS
@@ -72,54 +125,6 @@ function storeSearchInLocalStorage(searchInput) {
   localStorage.setItem("search", searchInput)
 }
 
-
-search()
-
-// FORM EVENT LISTENER
-searchForm.addEventListener("submit", search)
-function search(e) {
-  // How are we accessing `e` even though I'm not passing it in as an argument?
-  if (e) e.preventDefault()
-  
-  // Clear the movies container
-  moviesContainer.innerHTML = ""
-  let searchInput = document.getElementById("search-input").value
-  
-  searchInput ? storeSearchInLocalStorage(searchInput) : searchInput = getSearchFromLocalStorage()
-
-  // Grab a list of movie objects from the OMDB API
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchInput}`)
-      .then(response => response.json())
-      .then(data => {
-        // What's the diff between a try catch block and doing this?
-        if (data.Error) {
-          moviesContainer.insertAdjacentHTML("beforeend", `<h1>${data.Error}</h1>`)
-          return
-        }
-        // Iterate through the list of movies
-        data.Search.forEach(movie => {
-          const movieId = movie.imdbID
-          // Use the ID to make a request to the OMDB API for more details on a specific movie
-          fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${movieId}`)
-          .then(response => response.json())
-          .then(movieData => {
-            // Generate the HTML and add it to the DOM
-            moviesContainer.insertAdjacentHTML("beforeend", getMovieHtml(movieData)) 
-            const addBtn = document.getElementById(movieId)
-            addBtn.addEventListener("click", () => {
-              if (addBtn.textContent === "✅ Added") {
-                deleteMovieFromLocalStorage(movieId)
-                addBtn.textContent = "➕ Watchlist"
-              } else {
-                addMovieToLocalStorage(movieData)
-                addBtn.textContent = "✅ Added"
-              }
-            })
-          })
-        })
-      })
-    }
-
 // HELPER FUNCTIONS
 function setHtmlIfWatchlistEmpty() {
   let movies = getMoviesFromLocalStorage()
@@ -128,14 +133,14 @@ function setHtmlIfWatchlistEmpty() {
   }
 }
 
-// Steps:
+// Psuedocode for getMovieHtml
 // Use search query parameter to search for a movie
 // Retrieve the imdbID from the response
 // Use the imdbID to make a request to the OMDB API
 // Use the response from the OMDB API to render the movie details
 function getMovieHtml(movieData, page="search") {
   const { Title, Poster, imdbRating, imdbID, Runtime, Genre, Plot } = movieData
-  // if page is watchlist, set page to watchlist, otherwise set btnName to search
+  // if page is watchlist, set btn name to - remove, else set btn name to + watchlist
   let btnName
   page === "watchlist" ? btnName = "➖ Remove" : btnName = "➕ Watchlist"
 
@@ -143,6 +148,7 @@ function getMovieHtml(movieData, page="search") {
     btnName = "✅ Added"
   }
 
+  // if window width is less than 65ch, return the following html. NOTE: the only difference is that the last p element with the class move-description is shifted
   if (window.matchMedia("(max-width: 65ch)").matches) {
     return `
   <div class="movie-container">
