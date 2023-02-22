@@ -40,7 +40,7 @@ button {
 }
 
 .header-container {
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   margin-bottom: 3rem;
 }
@@ -70,7 +70,6 @@ button {
 
 .searchbar > input {
   flex: 4;
-  border-radius: 5px 0 0 5px;
 }
 
 .searchbar > button {
@@ -119,6 +118,15 @@ h2.movie-title {
 }
 
 /* Components */
+/* .magnifying-glass {
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  font-size: 1.3rem;
+  position: absolute;
+  top: 15%;
+} */
+
 .searchbar {
   position: relative;
 }
@@ -133,6 +141,7 @@ h2.movie-title {
   padding: .4rem .5rem;
   border: none;
   color: hsl(0, 0%, 65%);
+  border-radius: 5px 0 0 5px;
 }
 
 .searchbar > input:focus,
@@ -228,7 +237,16 @@ h2.movie-title {
   }
 
   .header-container::before {
-    bottom: -55%;
+    bottom: -60%;
+  }
+
+  .searchbar > input {
+    padding: .47rem 1rem;
+  }
+
+  input,
+  button {
+    font-size: 1.2rem;
   }
 }
 
