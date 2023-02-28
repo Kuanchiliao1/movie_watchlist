@@ -5,7 +5,8 @@
 // - Error message if search invalid
 
 import getMovieHtml from "./utils.js"
-import {deleteMovieFromLocalStorage, getSearchFromLocalStorage, getMoviesFromLocalStorage, addMovieToLocalStorage, isMovieInLocalStorage, storeSearchInLocalStorage} from './localstorage.js'
+import {deleteMovieFromLocalStorage, getSearchFromLocalStorage, getMoviesFromLocalStorage, addMovieToLocalStorage, storeSearchInLocalStorage} from './localstorage.js'
+
 
 const apiKey = "f67d1b01"
 // DOM Elements

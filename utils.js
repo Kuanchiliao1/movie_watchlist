@@ -1,5 +1,5 @@
 // utils.js
-import {deleteMovieFromLocalStorage, getSearchFromLocalStorage, addMovieToLocalStorage, isMovieInLocalStorage, storeSearchInLocalStorage} from './localstorage.js'
+import {isMovieInLocalStorage} from './localstorage.js'
 
 export default function getMovieHtml(movieData, page="search") {
   const { Title, Poster, imdbRating, imdbID, Runtime, Genre, Plot } = movieData
